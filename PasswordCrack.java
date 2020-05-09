@@ -51,6 +51,16 @@ class PasswordCrack {
 	
 	public static void mutateDictionary(ArrayList<String> dictionary, ArrayList<String> p) {
 		
+		System.out.println("reversing dictionary words");
+		ArrayList<String> reversed = new ArrayList<String>();
+		String rev = "";
+                for (int i = 0; i < dictionary.size(); i++) {
+			rev = new StringBuilder(dictionary.get(i)).reverse().toString();
+                        reversed.add(rev);
+                }
+
+		crackPasswords(reversed, p);
+
 		System.out.println("appending numbers");
 		for (int i = 0; i < 10; i++) {
 			ArrayList<String> appended = new ArrayList<String>();
@@ -112,6 +122,9 @@ class PasswordCrack {
 			String a = jcrypt.crypt(salt, dictionary.get(i));
 			
 			if (foundHashes.contains(a)) {
+				i = 0;
+				inc++;
+				oldInc = inc;
 				continue;
 			}
 
