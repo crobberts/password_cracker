@@ -51,7 +51,28 @@ class PasswordCrack {
 	
 	public static void mutateDictionary(ArrayList<String> dictionary, ArrayList<String> p) {
 		
-		System.out.println("reversing dictionary words");
+		System.out.println("Upper case dictionary");
+		System.out.println("---------------------");
+                ArrayList<String> upper = new ArrayList<String>();
+                for (int i = 0; i < dictionary.size(); i++) {
+                        upper.add(dictionary.get(i).toUpperCase());
+                }
+
+                crackPasswords(upper, p);
+		
+		System.out.println("Upper case dictionary reversed");
+                System.out.println("---------------------");
+                ArrayList<String> upperRev = new ArrayList<String>();
+		String r = "";
+                for (int i = 0; i < dictionary.size(); i++) {
+			r = new StringBuilder(dictionary.get(i)).reverse().toString().toUpperCase();
+                        upperRev.add(r);
+                }
+
+		crackPasswords(upperRev, p);
+
+		System.out.println("Reversing dictionary words");
+		System.out.println("---------------------");
 		ArrayList<String> reversed = new ArrayList<String>();
 		String rev = "";
                 for (int i = 0; i < dictionary.size(); i++) {
@@ -60,8 +81,31 @@ class PasswordCrack {
                 }
 
 		crackPasswords(reversed, p);
+		
+		System.out.println("Reflecting dictionary words");
+                System.out.println("---------------------");
+                ArrayList<String> reflected = new ArrayList<String>();
+                String ref = "";
+		String revref = "";
+                for (int i = 0; i < dictionary.size(); i++) {
+                        ref = (new StringBuilder(dictionary.get(i)).reverse().toString()) + dictionary.get(i);
+			revref = dictionary.get(i) + (new StringBuilder(dictionary.get(i)).reverse().toString());
+                        reflected.add(rev);
+			reflected.add(revref);
+                }
+		
+		crackPasswords(reflected, p);
+		
+		System.out.println("Repeating/appending word");
+		String doubleWord = "";
+		ArrayList<String> doubleWords = new ArrayList<String>();
+		for (int i = 0; i < dictionary.size(); i++) {
+			doubleWord = dictionary.get(i) + dictionary.get(i);
+			doubleWords.add(doubleWord);
+		}
 
-		System.out.println("appending numbers");
+		System.out.println("Appending numbers");
+		System.out.println("---------------------");
 		for (int i = 0; i < 10; i++) {
 			ArrayList<String> appended = new ArrayList<String>();
 			for (int j = 0; j < dictionary.size(); j++) {
@@ -71,7 +115,19 @@ class PasswordCrack {
 			crackPasswords(appended, p);
 		}
 
-		System.out.println("appending letters");
+		System.out.println("Prepending numbers");
+		System.out.println("---------------------");
+                for (int i = 0; i < 10; i++) {
+                        ArrayList<String> prepended = new ArrayList<String>();
+                        for (int j = 0; j < dictionary.size(); j++) {
+                                prepended.add(Integer.toString(i) + dictionary.get(j));
+                        }
+
+                        crackPasswords(prepended, p);
+                }
+		
+		System.out.println("Appending letters");
+		System.out.println("---------------------");
 		for (int i = 65; i < 123; i++) {
                         ArrayList<String> appendedLetters = new ArrayList<String>();
                         for (int j = 0; j < dictionary.size(); j++) {
@@ -81,7 +137,8 @@ class PasswordCrack {
                         crackPasswords(appendedLetters, p);
                 }
 
-		System.out.println("prepending letters");
+		System.out.println("Prepending letters");
+		System.out.println("---------------------");
                 for (int i = 65; i < 123; i++) {
                         ArrayList<String> prependedLetters = new ArrayList<String>();
                         for (int j = 0; j < dictionary.size(); j++) {
@@ -90,24 +147,6 @@ class PasswordCrack {
 
                         crackPasswords(prependedLetters, p);
                 }
-		
-		System.out.println("Prepending");
-		for (int i = 0; i < 10; i++) {
-			ArrayList<String> prepended = new ArrayList<String>();
-                        for (int j = 0; j < dictionary.size(); j++) {
-                                prepended.add(Integer.toString(i) + dictionary.get(j));
-                        }
-
-                        crackPasswords(prepended, p);
-		}
-
-		System.out.println("upper case dictionary");
-		ArrayList<String> upper = new ArrayList<String>();
-                for (int i = 0; i < dictionary.size(); i++) {
-                        upper.add(dictionary.get(i).toUpperCase());
-                }
-
-		crackPasswords(upper, p);
 	}
 
 	public static void crackPasswords(ArrayList<String> dictionary, ArrayList<String> p) {
@@ -159,6 +198,7 @@ class PasswordCrack {
 		ArrayList<String> usernames = extractInfo(p, 0);
 		ArrayList<String> names = extractInfo(p, 4);
 		
+		System.out.println("Passwd file analysis");
 		for (String pass:p) {
 			String username = extractInfo(pass, 0);
 			String infoField = extractInfo(pass, 4);
@@ -170,8 +210,6 @@ class PasswordCrack {
 			//tryUsername(username, password, salt);
 			tryInfoField(infoField, password, salt);
 		}
-
-		System.out.println("Done");
 	}
 	
 	public static void tryUsername(String username, String password, String salt) {
