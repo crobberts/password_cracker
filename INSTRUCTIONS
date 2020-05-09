@@ -1,0 +1,30 @@
+Challenge for password cracking assignment
+------------------------------------------
+
+This challenge consists of the following files:
+
+INSTRUCTIONS: This file.
+
+passwd1.txt and passwd2.txt:
+UNIX password files, with hashed and salted passwords. The hashes are
+computed with the Jcrypt function.
+
+passwd1-plain.txt:
+Plaintext passwords for the entries in passwd1.txt.
+
+passwd2-plain.txt:
+Empty file. Your job is to fill in this file with plaintext passwords
+for the entries in passwd2.txt. The passwords do not need to be in any
+particular order. Just fill in all passwords that you find. The file
+must only contain passwords, nothing else.  One password per line.
+
+Makefile:
+Configuration file for "make" to create your submission archive. It is
+absolutely necessary that you use "make" for this, otherwise all
+required files will not be included, and your submission cannnot be
+graded. Just type "make"!
+
+jcrypt.java:
+Java implementation of the UNIX "crypt" command. Look at the
+"jcrypt.crypt" method!
+
