@@ -51,6 +51,33 @@ class PasswordCrack {
 	
 	public static void mutateDictionary(ArrayList<String> dictionary, ArrayList<String> p) {
 		
+		System.out.println("Varannan dictionary");
+                System.out.println("---------------------");
+                ArrayList<String> varannan = new ArrayList<String>();
+                for (int i = 0; i < dictionary.size(); i++) {
+			String tur = "";
+			String tur2 = "";
+			for (int j = 0; j < dictionary.get(i).length(); j++) {
+				char c = ' ';
+				char d = ' ';
+				if (j % 2 == 0) {
+					 c = Character.toUpperCase(dictionary.get(i).charAt(j));
+					 d = dictionary.get(i).charAt(j);
+					 tur += c;
+					 tur2 += d;
+				} else {
+					c = dictionary.get(i).charAt(j);
+					d = Character.toUpperCase(dictionary.get(i).charAt(j));
+					tur += c;
+					tur2 += d;
+				}
+			}
+                        varannan.add(tur);
+			varannan.add(tur2);
+                }
+
+                crackPasswords(varannan, p);
+
 		System.out.println("Upper case dictionary");
 		System.out.println("---------------------");
                 ArrayList<String> upper = new ArrayList<String>();
@@ -95,7 +122,7 @@ class PasswordCrack {
                 }
 		
 		crackPasswords(reflected, p);
-		
+			
 		System.out.println("Repeating/appending word");
 		String doubleWord = "";
 		ArrayList<String> doubleWords = new ArrayList<String>();
@@ -125,7 +152,51 @@ class PasswordCrack {
 
                         crackPasswords(prepended, p);
                 }
+
+		System.out.println("Removing letters");
+                System.out.println("---------------------");
+		String toMutate = "";
+		String mutateTo = "";
+		ArrayList<String> toMutateString0 = new ArrayList<String>();
+                for (int i = 0; i < dictionary.size(); i++) {
+			toMutate = dictionary.get(i).substring(0, dictionary.get(i).length() - 2);
+			mutateTo = dictionary.get(i).substring(1, dictionary.get(i).length() - 1);
+			toMutateString0.add(toMutate);
+			toMutateString0.add(mutateTo);
+                }
 		
+		crackPasswords(toMutateString0, p);
+
+		System.out.println("Removing letters uppercase");
+                System.out.println("---------------------");
+                String toMutate2 = "";
+                String mutateTo2 = "";
+                ArrayList<String> toMutateString2 = new ArrayList<String>();
+                for (int i = 0; i < dictionary.size(); i++) {
+                        toMutate2 = dictionary.get(i).toUpperCase().substring(0, dictionary.get(i).length() - 2);
+                        mutateTo2 = dictionary.get(i).toLowerCase().substring(1, dictionary.get(i).length() - 1);
+                        toMutateString2.add(toMutate2);
+                        toMutateString2.add(mutateTo2);
+                }
+	
+		crackPasswords(toMutateString2, p);
+		
+		System.out.println("First letter uppercase");
+                System.out.println("---------------------");
+		ArrayList<String> firstLetterUpperCase = new ArrayList<String>();
+                String firstLetter = "";
+		String lastLetter = "";
+                ArrayList<String> toMutateString = new ArrayList<String>();
+                for (int i = 0; i < dictionary.size(); i++) {
+                        firstLetter = dictionary.get(i).substring(0, 1).toUpperCase() + dictionary.get(i).substring(1, dictionary.get(i).length() - 1);
+			System.out.println(firstLetter);
+                        lastLetter = dictionary.get(i).substring(0, dictionary.get(i).length() - 2) + dictionary.get(i).substring(dictionary.get(i).length()-2, dictionary.get(i).length()-1).toUpperCase();
+                        firstLetterUpperCase.add(firstLetter);
+                        firstLetterUpperCase.add(lastLetter);
+                }
+
+                crackPasswords(firstLetterUpperCase, p);
+
 		System.out.println("Appending letters");
 		System.out.println("---------------------");
 		for (int i = 65; i < 123; i++) {
@@ -207,7 +278,7 @@ class PasswordCrack {
 			String password = passwordField.substring(2);
 			String salt = passwordField.substring(0, 2);
 			
-			//tryUsername(username, password, salt);
+			tryUsername(username, password, salt);
 			tryInfoField(infoField, password, salt);
 		}
 	}
@@ -216,6 +287,11 @@ class PasswordCrack {
 		String encUsername = jcrypt.crypt(salt, username);
 		String reversed = new StringBuilder(username).reverse().toString();
 		String revUsername = jcrypt.crypt(salt, reversed);
+
+		if (foundHashes.contains(salt+password)) {
+                	return;
+                }
+
 		if (encUsername.substring(2).equals(password)) {
 			System.out.println("PASSWORD FOUND!!! " + username);
 		}
@@ -223,6 +299,66 @@ class PasswordCrack {
 		if (revUsername.substring(2).equals(password)) {
 			System.out.println("PASSWORD FOUND!!! " + reversed);
 		}
+
+		 if (jcrypt.crypt(salt, username.toUpperCase()).substring(2).equals(password)) {
+                                System.out.println("PASSWORD FOUND!!! " + username.toUpperCase());
+                 }
+		 
+		 String pp = username+username;
+                 if (jcrypt.crypt(salt, pp).substring(2).equals(password)) {
+                                System.out.println("PASSWORD FOUND!!! " + pp);
+               	 }
+		
+		 String ok = pp.toUpperCase();
+               	 if (jcrypt.crypt(salt, ok).substring(2).equals(password)) {
+                                System.out.println("PASSWORD FOUND!!! " + ok);
+                 }
+
+		
+		String perm = "";
+                String mrep = "";
+                String lperm = "";
+                String mrepl = "";
+                for (int i = 0; i < 10; i++) {
+                        perm = username + Integer.toString(i);
+                        mrep = Integer.toString(i) + username;
+
+                        perm = revUsername + Integer.toString(i);
+                        mrep = Integer.toString(i) + revUsername;
+
+                        if (jcrypt.crypt(salt, perm).substring(2).equals(password)) {
+                                System.out.println("PASSWORD FOUND!!! " + perm);
+                        }
+
+                        if (jcrypt.crypt(salt, mrep).substring(2).equals(password)) {
+                                System.out.println("PASSWORD FOUND!!! " + mrep);
+                        }
+
+                        if (jcrypt.crypt(salt, mrepl).substring(2).equals(password)) {
+                                System.out.println("PASSWORD FOUND!!! " + mrepl);
+                        }
+
+                        if (jcrypt.crypt(salt, lperm).substring(2).equals(password)) {
+                                System.out.println("PASSWORD FOUND!!! " + lperm);
+                        }
+                }
+		
+		String ll = "";
+		String xx = "";
+		for (int i = 65; i < 122; i++) {
+			ll = username + (char) i;
+			xx = (char) i + username;
+			
+			if (jcrypt.crypt(salt, ll).substring(2).equals(password)) {
+                                System.out.println("PASSWORD FOUND!!! " + perm);
+                        }
+
+			if (jcrypt.crypt(salt, xx).substring(2).equals(password)) {
+                                System.out.println("PASSWORD FOUND!!! " + xx);
+                        }
+		}
+
+			
 	}
 	
 	public static void tryInfoField(String infoField, String password, String salt) {
@@ -230,6 +366,9 @@ class PasswordCrack {
 		String firstName = info[0];
 		String lastName = info[info.length - 1];
 		String fullName = infoField.join(" ");
+		if (foundHashes.contains(salt+password)) {
+			return;
+		}
 
 		if (jcrypt.crypt(salt, fullName).substring(2).equals(password)) {
                         System.out.println("PASSWORD FOUND!!! " + fullName);
@@ -266,6 +405,36 @@ class PasswordCrack {
 		if (jcrypt.crypt(salt, lastName).substring(2).equals(password)) {
 			System.out.println("PASSWORD FOUND!!! " + lastName);
                 }
+		
+		String perm = "";
+		String mrep = "";
+		String lperm = "";
+		String mrepl = "";
+		for (int i = 0; i < 10; i++) {
+			perm = firstName + Integer.toString(i);
+			mrep = Integer.toString(i) + firstName;
+
+			perm = lastName + Integer.toString(i);
+                        mrep = Integer.toString(i) + lastName;
+
+			if (jcrypt.crypt(salt, perm).substring(2).equals(password)) {
+				System.out.println("PASSWORD FOUND!!! " + perm);
+			}
+
+			if (jcrypt.crypt(salt, mrep).substring(2).equals(password)) {
+                                System.out.println("PASSWORD FOUND!!! " + mrep);
+                        }
+
+			if (jcrypt.crypt(salt, mrepl).substring(2).equals(password)) {
+                                System.out.println("PASSWORD FOUND!!! " + mrepl);
+                        }
+
+			if (jcrypt.crypt(salt, lperm).substring(2).equals(password)) {
+                                System.out.println("PASSWORD FOUND!!! " + lperm);
+                        }
+		}
+
+		checkStandardPasswords(salt, password);
 
 	}
 
@@ -275,11 +444,37 @@ class PasswordCrack {
 			parsed.add(unparsed.get(i).split(":")[index]);
 		}
 	
-		//System.out.println(parsed);
 		return parsed;
 	}
 
 	public static String extractInfo (String unparsed, int index) {
                 return unparsed.split(":")[index];
         }
+
+	public static void checkStandardPasswords(String salt, String password) {
+		ArrayList<String> standard = new ArrayList<String>();
+		standard.add("123456");
+		standard.add("12345");
+		standard.add("password");
+		standard.add("iloveyou");
+		standard.add("princess");
+		standard.add("1234567");
+		standard.add("12345678");
+		standard.add("abc123");
+		standard.add("nicole");
+		standard.add("daniel");
+		standard.add("babygirl");
+		standard.add("chocolate");
+		standard.add("Password123");
+		standard.add("password123");
+		standard.add("password1");
+		standard.add("qwerty");
+		standard.add("QWERTY");
+		standard.add("secret");
+		for (int i = 0; i < standard.size(); i++) {
+			if (jcrypt.crypt(salt, standard.get(i)).substring(2).equals(password)) {
+                                System.out.println("PASSWORD FOUND!!! " + standard.get(i));
+                        }
+		}
+	}
 }
