@@ -131,28 +131,6 @@ class PasswordCrack {
 			doubleWords.add(doubleWord);
 		}
 
-		System.out.println("Appending numbers");
-		System.out.println("---------------------");
-		for (int i = 0; i < 10; i++) {
-			ArrayList<String> appended = new ArrayList<String>();
-			for (int j = 0; j < dictionary.size(); j++) {
-				appended.add(dictionary.get(j) + Integer.toString(i));
-			}
-
-			crackPasswords(appended, p);
-		}
-
-		System.out.println("Prepending numbers");
-		System.out.println("---------------------");
-                for (int i = 0; i < 10; i++) {
-                        ArrayList<String> prepended = new ArrayList<String>();
-                        for (int j = 0; j < dictionary.size(); j++) {
-                                prepended.add(Integer.toString(i) + dictionary.get(j));
-                        }
-
-                        crackPasswords(prepended, p);
-                }
-
 		System.out.println("Removing letters");
                 System.out.println("---------------------");
 		String toMutate = "";
@@ -181,21 +159,49 @@ class PasswordCrack {
 	
 		crackPasswords(toMutateString2, p);
 		
-		System.out.println("First letter uppercase");
+		System.out.println("First/Last letter uppercase");
                 System.out.println("---------------------");
 		ArrayList<String> firstLetterUpperCase = new ArrayList<String>();
                 String firstLetter = "";
 		String lastLetter = "";
-                ArrayList<String> toMutateString = new ArrayList<String>();
+		String firstLower = "";
+		String lastLower = "";
+                
                 for (int i = 0; i < dictionary.size(); i++) {
                         firstLetter = dictionary.get(i).substring(0, 1).toUpperCase() + dictionary.get(i).substring(1, dictionary.get(i).length() - 1);
-			System.out.println(firstLetter);
                         lastLetter = dictionary.get(i).substring(0, dictionary.get(i).length() - 2) + dictionary.get(i).substring(dictionary.get(i).length()-2, dictionary.get(i).length()-1).toUpperCase();
+			firstLower = dictionary.get(i).substring(0, 1) + dictionary.get(i).substring(1, dictionary.get(i).length() - 1).toUpperCase();
+			lastLower = dictionary.get(i).substring(0, dictionary.get(i).length() - 2).toUpperCase() + dictionary.get(i).substring(dictionary.get(i).length()-2, dictionary.get(i).length()-1);
                         firstLetterUpperCase.add(firstLetter);
                         firstLetterUpperCase.add(lastLetter);
+			firstLetterUpperCase.add(firstLower);
+			firstLetterUpperCase.add(lastLower);
+                
+		}
+		
+                crackPasswords(firstLetterUpperCase, p);
+		
+		System.out.println("Appending numbers");
+                System.out.println("---------------------");
+                for (int i = 0; i < 10; i++) {
+                        ArrayList<String> appended = new ArrayList<String>();
+                        for (int j = 0; j < dictionary.size(); j++) {
+                                appended.add(dictionary.get(j) + Integer.toString(i));
+                        }
+
+                        crackPasswords(appended, p);
                 }
 
-                crackPasswords(firstLetterUpperCase, p);
+                System.out.println("Prepending numbers");
+                System.out.println("---------------------");
+                for (int i = 0; i < 10; i++) {
+                        ArrayList<String> prepended = new ArrayList<String>();
+                        for (int j = 0; j < dictionary.size(); j++) {
+                                prepended.add(Integer.toString(i) + dictionary.get(j));
+                        }
+
+                        crackPasswords(prepended, p);
+                }
 
 		System.out.println("Appending letters");
 		System.out.println("---------------------");
@@ -369,9 +375,77 @@ class PasswordCrack {
 		if (foundHashes.contains(salt+password)) {
 			return;
 		}
+		
+		String fn = "";
+		String fn2 = "";
+		String ln = "";
+		String ln2 = "";
+
+		for (int i = 0; i < firstName.length(); i++) {
+			char a = ' ';
+			char b = ' ';
+			if (i % 2 == 0) {
+				a = Character.toUpperCase(firstName.charAt(i));
+				b = firstName.charAt(i);
+			} else {
+				a = firstName.charAt(i);
+				b = Character.toUpperCase(firstName.charAt(i));
+			}
+
+			fn += a;
+                        fn2 += b;
+		}
+
+		for (int i = 0; i < lastName.length(); i++) {
+                        char a = ' ';
+                        char b = ' ';
+                        if (i % 2 == 0) {
+                                a = Character.toUpperCase(lastName.charAt(i));
+                                b = lastName.charAt(i);
+                        } else {
+                                a = lastName.charAt(i);
+                                b = Character.toUpperCase(lastName.charAt(i));
+                        }
+
+                        ln += a;
+                        ln2 += b;
+                }
+
+		
+		if (jcrypt.crypt(salt, (firstName + lastName)).substring(2).equals(password)) {
+                        System.out.println("PASSWORD FOUND!!! " + firstName + lastName);
+                }
+
+		if (jcrypt.crypt(salt, (firstName + lastName).toUpperCase()).substring(2).equals(password)) {
+                        System.out.println("PASSWORD FOUND!!! " + (firstName + lastName).toUpperCase());
+                }
+
+		if (jcrypt.crypt(salt, fn).substring(2).equals(password)) {
+                        System.out.println("PASSWORD FOUND!!! " + fn);
+                }
+
+		if (jcrypt.crypt(salt, ln).substring(2).equals(password)) {
+                        System.out.println("PASSWORD FOUND!!! " + ln);
+                }
+
+		if (jcrypt.crypt(salt, ln2).substring(2).equals(password)) {
+                        System.out.println("PASSWORD FOUND!!! " + ln2);
+                }
+
+		if (jcrypt.crypt(salt, fn2).substring(2).equals(password)) {
+                        System.out.println("PASSWORD FOUND!!! " + fn2);
+                }
 
 		if (jcrypt.crypt(salt, fullName).substring(2).equals(password)) {
                         System.out.println("PASSWORD FOUND!!! " + fullName);
+                }
+
+		if (jcrypt.crypt(salt, firstName + "123").substring(2).equals(password)) {
+                        System.out.println("PASSWORD FOUND!!! " + fullName + "123");
+                }
+
+		if (jcrypt.crypt(salt, lastName + "123").substring(2).equals(password)) {
+                        System.out.println("PASSWORD FOUND!!! " + lastName + "123");
                 }
 
 		if (jcrypt.crypt(salt, fullName.toUpperCase()).substring(2).equals(password)) {
